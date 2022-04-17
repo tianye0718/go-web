@@ -33,8 +33,9 @@ func onlyForV2() gee.HandlerFunc {
 
 func main() {
 
-	r := gee.New()
-	r.Use(gee.Logger())
+	// r := gee.New()
+	// r.Use(gee.Logger())
+	r := gee.Default()
 	// prepare HTML render and static handler
 	r.SetFuncMap(template.FuncMap{"FormatAsDate": FormatAsDate})
 	r.LoadHTMLGlob("templates/*")
@@ -60,6 +61,12 @@ func main() {
 			"title": "gee",
 			"now":   time.Date(2022, 4, 17, 0, 0, 0, 0, time.UTC),
 		})
+	})
+
+	// test panic -- index out of range for testing Recovery()
+	r.GET("/panic", func(c *gee.Context) {
+		names := []string{"Ye"}
+		c.String(http.StatusOK, names[2])
 	})
 
 	v1 := r.Group("/v1")
